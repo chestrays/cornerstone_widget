@@ -1,6 +1,7 @@
 import ipywidgets as widgets
 import traitlets as tr
 import base64
+import numpy as np
 
 def encode_numpy_b64(in_img):
     # type: (np.ndarray) -> str

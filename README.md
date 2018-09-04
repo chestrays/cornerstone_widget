@@ -7,7 +7,7 @@ Notebooks
 ----
 
 The notebooks directory contains demo and tutorial
-- https://mybinder.org/v2/gh/chestrays/cornerstone_widget/master?filepath=notebooks%2Fdemo.ipynb
+- https://mybinder.org/v2/gh/chestrays/cornerstone_widget/master?urlpath=apps%2Fnotebooks%2Fdemo.ipynb
 
 Installation
 ------------
