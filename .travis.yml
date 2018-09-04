@@ -17,8 +17,7 @@ env:
 install:
   - pip install -e .
   - pip install pytest-cov codecov mypy flake8 nose
-  - if [ "$TO_TEST" = "NOTEBOOKS" ]; pip install notebook nbconvert; fi
-  -
+  - if [ "$TO_TEST" = "NOTEBOOKS" ]; then pip install notebook nbconvert; fi
 
 script:
   - if [ "$TO_TEST" = "CODE" ]; then mypy -p jupyanno --ignore-missing-imports; fi
