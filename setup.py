@@ -80,9 +80,9 @@ class NPM(Command):
         npmName = 'npm';
         if platform.system() == 'Windows':
             npmName = 'npm.cmd';
-            
+
         return npmName;
-    
+
     def has_npm(self):
         npmName = self.get_npm_name();
         try:
@@ -152,7 +152,7 @@ setup_args = {
 
     'author': 'Kevin Mader',
     'author_email': 'kevinmader@gmail.com',
-    'url': 'https://github.com//cornerstone_widget',
+    'url': 'https://github.com/chestrays/cornerstone_widget',
     'keywords': [
         'ipython',
         'jupyter',
