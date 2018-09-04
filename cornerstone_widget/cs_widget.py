@@ -16,9 +16,14 @@ def encode_numpy_b64(in_img):
 @widgets.register
 class CornerstoneWidget(widgets.DOMWidget):
     """A simple cornerstone widget"""
-    view_name = tr.Unicode('CornerstoneWidget').tag(sync=True)
+    _view_name = Unicode('CornerstoneView').tag(sync=True)
     _view_module = tr.Unicode('cornerstone_widget').tag(sync=True)
+    _model_module_version = tr.Unicode('0.1.0').tag(sync=True)
+
+    _model_name = Unicode('CornerstoneModel').tag(sync=True)
+    _model_module = tr.Unicode('cornerstone_widget').tag(sync=True)
     _view_module_version = tr.Unicode('0.1.0').tag(sync=True)
+
     title_field = tr.Unicode('Awesome Widget').tag(sync=True)
     img_bytes = tr.Unicode('AQAAAAAAAAABAAAAAAAAAAEA').tag(sync=True)
     img_width = tr.Int(3).tag(sync=True)
