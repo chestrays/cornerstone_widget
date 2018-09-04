@@ -1,5 +1,6 @@
 language: python
-
+python:
+  - "3.6"
 notifications:
   email: false
 
@@ -9,10 +10,9 @@ cache:
 
 env:
   matrix:
-    - DISTRIB="conda" PYTHON_VERSION="3.6" TO_TEST=CODE
-    - DISTRIB="conda" PYTHON_VERSION="3.6" TO_TEST=NOTEBOOKS
-    - DISTRIB="conda" PYTHON_VERSION="3.6" TO_TEST=STYLE
-
+    - TO_TEST=CODE
+    - TO_TEST=NOTEBOOKS
+    - TO_TEST=STYLE
 
 install:
   - pip install -e .

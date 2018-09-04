@@ -3,6 +3,7 @@ import traitlets as tr
 import base64
 import numpy as np
 
+
 def encode_numpy_b64(in_img):
     # type: (np.ndarray) -> str
     """
@@ -13,6 +14,7 @@ def encode_numpy_b64(in_img):
     'AAAAAAAA8D8AAAAAAAAAAAAAAAAAAAAAAAAAAAAA8D8='
     """
     return base64.b64encode(in_img.tobytes()).decode()
+
 
 @widgets.register
 class CornerstoneWidget(widgets.DOMWidget):
@@ -28,7 +30,7 @@ class CornerstoneWidget(widgets.DOMWidget):
     title_field = tr.Unicode('Awesome Widget').tag(sync=True)
     img_bytes = tr.Unicode('AQAAAAAAAAABAAAAAAAAAAEA').tag(sync=True)
     img_width = tr.Int(3).tag(sync=True)
-    img_height= tr.Int(3).tag(sync=True)
+    img_height = tr.Int(3).tag(sync=True)
     img_min = tr.Float(0).tag(sync=True)
     img_max = tr.Float(255).tag(sync=True)
     img_scale = tr.Float(1.0).tag(sync=True)
@@ -42,4 +44,4 @@ class CornerstoneWidget(widgets.DOMWidget):
         self.img_min = float(in_image.min())
         self.img_max = float(in_image.max())
         self.img_bytes = encode_numpy_b64(in_image)
-        self.img_scale=1.0
+        self.img_scale = 1.0
