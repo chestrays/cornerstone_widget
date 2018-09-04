@@ -1,4 +1,4 @@
-cornerstone_widget [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/chestrays/cornerstone_widget/master)
+cornerstone_widget  [![Build Status](https://travis-ci.org/chestrays/cornerstone_widget.svg?branch=master)](https://travis-ci.org/chestrays/cornerstone_widget)  [![codecov](https://codecov.io/gh/chestrays/cornerstone_widget/branch/master/graph/badge.svg)](https://codecov.io/gh/chestrays/cornerstone_widget) [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/chestrays/cornerstone_widget/master)
 ===============================
 
 A Jupyter Widget for the Cornerstone Medical Image Viewing Library
