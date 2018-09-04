@@ -3,6 +3,12 @@ cornerstone_widget [![Binder](https://mybinder.org/badge.svg)](https://mybinder.
 
 A Jupyter Widget for the Cornerstone Medical Image Viewing Library
 
+Notebooks
+----
+
+The notebooks directory contains demo and tutorial
+- https://mybinder.org/v2/gh/chestrays/cornerstone_widget/master?filepath=notebooks%2Fdemo.ipynb
+
 Installation
 ------------
 

@@ -16,11 +16,11 @@ def encode_numpy_b64(in_img):
 @widgets.register
 class CornerstoneWidget(widgets.DOMWidget):
     """A simple cornerstone widget"""
-    _view_name = Unicode('CornerstoneView').tag(sync=True)
+    _view_name = tr.Unicode('CornerstoneView').tag(sync=True)
     _view_module = tr.Unicode('cornerstone_widget').tag(sync=True)
     _model_module_version = tr.Unicode('0.1.0').tag(sync=True)
 
-    _model_name = Unicode('CornerstoneModel').tag(sync=True)
+    _model_name = tr.Unicode('CornerstoneModel').tag(sync=True)
     _model_module = tr.Unicode('cornerstone_widget').tag(sync=True)
     _view_module_version = tr.Unicode('0.1.0').tag(sync=True)
 
@@ -38,7 +38,7 @@ class CornerstoneWidget(widgets.DOMWidget):
         Update the image loaded in the widget
         """
         (self.img_width, self.img_height) = in_image.shape
-        self.img_min = in_image.min()
-        self.img_max = in_image.max()
+        self.img_min = float(in_image.min())
+        self.img_max = float(in_image.max())
         self.img_bytes = encode_numpy_b64(in_image)
         self.img_scale=1.0
