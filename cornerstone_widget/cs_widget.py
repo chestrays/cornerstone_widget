@@ -33,6 +33,10 @@ class CornerstoneWidget(widgets.DOMWidget):
     img_scale = tr.Float(1.0).tag(sync=True)
 
     def update_image(self, in_image):
+        # type: (CornerstoneWidget, np.ndarray) -> None
+        """
+        Update the image loaded in the widget
+        """
         (self.img_width, self.img_height) = in_image.shape
         self.img_min = in_image.min()
         self.img_max = in_image.max()
