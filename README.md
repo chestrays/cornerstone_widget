@@ -1,4 +1,4 @@
-cornerstone_widget
+cornerstone_widget [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/chestrays/cornerstone_widget/master)
 ===============================
 
 A Jupyter Widget for the Cornerstone Medical Image Viewing Library
