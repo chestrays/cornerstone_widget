@@ -1,11 +1,23 @@
 import ipywidgets as widgets
 import traitlets as tr
+import base64
+
+def encode_numpy_b64(in_img):
+    # type: (np.ndarray) -> str
+    """
+    Encode numpy arrays as b64 strings
+    :param in_img:
+    :return:
+    >>> encode_numpy_b64(np.eye(2))
+    'AAAAAAAA8D8AAAAAAAAAAAAAAAAAAAAAAAAAAAAA8D8='
+    """
+    return base64.b64encode(in_img.tobytes()).decode()
 
 @widgets.register
 class CornerstoneWidget(widgets.DOMWidget):
     """A simple cornerstone widget"""
     view_name = tr.Unicode('CornerstoneWidget').tag(sync=True)
-    _view_module = tr.Unicode('cs_widget').tag(sync=True)
+    _view_module = tr.Unicode('cornerstone_widget').tag(sync=True)
     _view_module_version = tr.Unicode('0.1.0').tag(sync=True)
     title_field = tr.Unicode('Awesome Widget').tag(sync=True)
     img_bytes = tr.Unicode('AQAAAAAAAAABAAAAAAAAAAEA').tag(sync=True)
@@ -19,5 +31,5 @@ class CornerstoneWidget(widgets.DOMWidget):
         (self.img_width, self.img_height) = in_image.shape
         self.img_min = in_image.min()
         self.img_max = in_image.max()
-        self.img_bytes = ja.cornerstone.encode_numpy_b64(in_image)
+        self.img_bytes = encode_numpy_b64(in_image)
         self.img_scale=1.0
