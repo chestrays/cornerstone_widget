@@ -1,0 +1,40 @@
+{
+  "name": "cornerstone_widget",
+  "version": "0.1.0",
+  "description": "A Jupyter Widget for the Cornerstone Medical Image Viewing Library",
+  "author": "Kevin Mader",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chestrays/cornerstone_widget.git"
+  },
+  "keywords": [
+    "jupyter",
+    "widgets",
+    "ipython",
+    "ipywidgets",
+    "jupyterlab-extension"
+  ],
+  "files": [
+    "lib/**/*.js",
+    "dist/*.js"
+  ],
+  "scripts": {
+    "clean": "rimraf dist/",
+    "prepublish": "webpack",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "webpack": "^3.5.5",
+    "rimraf": "^2.6.1"
+  },
+  "dependencies": {
+    "@jupyter-widgets/base": "^1.0.0",
+    "cornerstone-core": "^2.2.4",
+    "cornerstone-math": "^0.1.6",
+    "cornestone-tools": "^2.3.9"
+  },
+  "jupyterlab": {
+    "extension": "lib/labplugin"
+  }
+}

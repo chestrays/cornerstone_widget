@@ -1,0 +1,5 @@
+{
+  "load_extensions": {
+    "cornerstone_widget/extension": true
+  }
+}

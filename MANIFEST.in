@@ -1,0 +1,2 @@
+recursive-include cornerstone_widget/static *.*
+include cornerstone_widget.json
