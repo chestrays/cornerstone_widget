@@ -96,7 +96,7 @@ class CornerstoneWidget(widgets.DOMWidget):
         'pan'
         """
         tool_name = tool_name.lower().strip()
-        if tool_name not in self.VALID_TOOLS:
+        if tool_name not in self.VALID_TOOLS + ['', 'none']:
             raise NotImplementedError('{} tool is not available'.format(
                 tool_name))
         self._selected_tool = tool_name
