@@ -1,5 +1,6 @@
 import base64
 import json
+from typing import Dict
 
 import ipywidgets as widgets
 import numpy as np
@@ -101,6 +102,7 @@ class CornerstoneWidget(widgets.DOMWidget):
         self._selected_tool = tool_name
 
     def get_tool_state(self):
+        # type: () -> Dict
         """Get the state of all the tools as a dictionary"""
         if len(self._tool_state_out) > 0:
             return json.loads(self._tool_state_out)
@@ -145,7 +147,7 @@ class CornerstoneToolbarWidget(WidgetObject):
             """we need an extra layer of separation so the callbacks work"""
 
             def _callback(*args, **kwargs):
-                self.cur_image_view.select_tool(in_str)
+                self.set_tool(in_str)
 
             return _callback
 
@@ -175,6 +177,16 @@ class CornerstoneToolbarWidget(WidgetObject):
     def update_image(self, in_image):
         self._cur_image_data = in_image
         self.cur_image_view.update_image(self._cur_image_data)
+        self.set_tool('')
+        self.set_tool('reset')
+
+    def set_tool(self, tool_name):
+        """
+        Set the tool to use with the widget
+        :param tool_name:
+        :return:
+        """
+        self.cur_image_view.select_tool(tool_name)
 
     def _refresh_image(self):
         self.cur_image_view.update_image(self._empty_data)

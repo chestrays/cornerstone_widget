@@ -19,7 +19,6 @@ def test_ipy():
     assert widget_state['_tool_state_in'] == '{"dog": 1}'
 
 
-
 def test_tools():
     c = CornerstoneWidget()
     c.select_tool('pan')
