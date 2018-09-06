@@ -125,14 +125,22 @@ class CornerstoneToolbarWidget(WidgetObject):
         refresh_but.on_click(lambda *args, **kwargs: self._refresh_image())
 
         self._toolbar = [refresh_but]
+
+        def _button_switch_callback(in_str):
+            """we need an extra layer of separation so the callbacks work"""
+
+            def _callback(*args, **kwargs):
+                self.cur_image_view.select_tool(in_str)
+
+            return _callback
+
         for c_icon, c_tool in [('expand', 'pan'),
                                ('adjust', 'window'),
                                ('search-plus', 'zoom'),
                                ('info-circle', 'probe'),
                                ('th-large', 'bbox')]:
             c_but = widgets.Button(description="", icon=c_icon)
-            c_but.on_click(lambda *args, **kwargs:
-                           self.cur_image_view.select_tool(c_tool))
+            c_but.on_click(_button_switch_callback(c_tool))
             self._toolbar += [c_but]
 
         panel = widgets.VBox([widgets.HBox(self._toolbar),
