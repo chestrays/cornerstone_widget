@@ -130,7 +130,7 @@ class CornerstoneToolbarWidget(WidgetObject):
     >>> cs = CornerstoneToolbarWidget()
     """
 
-    def __init__(self):
+    def __init__(self, buttons_per_row=3):
         self.cur_image_view = CornerstoneWidget()
 
         self._empty_data = np.zeros((3, 3))
@@ -157,9 +157,17 @@ class CornerstoneToolbarWidget(WidgetObject):
             c_but.on_click(_button_switch_callback(c_tool))
             self._toolbar += [c_but]
 
-        panel = widgets.VBox([widgets.HBox(self._toolbar),
-                              self.cur_image_view
-                              ])
+        c_toolbar = []
+        c_row = []
+        for i, c_but in enumerate(self._toolbar, 1):
+            c_row += [c_but]
+            if (i % buttons_per_row) == 0:
+                c_toolbar += [widgets.HBox(c_row)]
+                c_row = []
+        if len(c_row) > 0:
+            c_toolbar += [widgets.HBox(c_row)]
+
+        panel = widgets.VBox(c_toolbar + [self.cur_image_view])
 
         super().__init__(panel)
 
