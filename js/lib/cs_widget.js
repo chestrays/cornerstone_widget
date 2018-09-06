@@ -133,12 +133,16 @@ var CornerstoneView = widgets.DOMWidgetView.extend({
         ctools.angle.deactivate(element, 1);
         ctools.highlight.deactivate(element, 1);
         ctools.freehand.deactivate(element, 1);
+        ctools.probe.deactivate(element, 1);
+
     },
     activate_tool: function () {
         var tool_name = this.model.get('_selected_tool');
         console.log('switching to tool: '+tool_name);
         if (tool_name == 'reset') {
+            this._disable_all_tools(this.viewer);
             cs.reset(this.viewer);
+            ctools.appState.restore({});
             this._setup_tools();
         } else {
             this._disable_all_tools(this.viewer);
