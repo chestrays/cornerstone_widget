@@ -134,12 +134,12 @@ class CornerstoneToolbarWidget(WidgetObject):
 
             return _callback
 
-        for c_icon, c_tool in [('expand', 'pan'),
+        for c_icon, c_tool in [('arrows', 'pan'),
                                ('adjust', 'window'),
                                ('search-plus', 'zoom'),
                                ('info-circle', 'probe'),
-                               ('th-large', 'bbox')]:
-            c_but = widgets.Button(description="", icon=c_icon)
+                               ('edit', 'bbox')]:
+            c_but = widgets.Button(description="", icon=c_icon, tooltip=c_tool)
             c_but.on_click(_button_switch_callback(c_tool))
             self._toolbar += [c_but]
 
