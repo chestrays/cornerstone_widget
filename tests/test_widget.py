@@ -14,6 +14,10 @@ def test_ipy():
     widget_html = embed_snippet(c)
     assert 'CornerstoneModel' in widget_html, 'Should contain widget code'
     assert 'cornerstone_widget' in widget_html, 'Should contain widget code'
+    c.set_tool_state({'dog': 1})
+    widget_state = c.get_state()
+    assert widget_state['_tool_state_in'] == '{"dog": 1}'
+
 
 
 def test_tools():

@@ -25,8 +25,8 @@ var CornerstoneModel = widgets.DOMWidgetModel.extend({
         img_min: 0,
         img_max: 1,
         _selected_tool: '',
-        _tool_state_counter: '',
-        _tool_state: ''
+        _tool_state_in: '',
+        _tool_state_out: ''
     })
 });
 
@@ -69,9 +69,19 @@ var CornerstoneView = widgets.DOMWidgetView.extend({
         this.dicom_changed();
         this.model.on('change:img_bytes', this.dicom_changed, this);
         this.model.on('change:img_scale', this.zoom_changed, this);
-        this.model.on('change:_tool_state', this.update_cs_state, this);
-        this.model.on('change:_tool_state_counter', this.save_cs_state, this);
+        this.model.on('change:_tool_state_in', this.update_cs_state, this);
         this.model.on('change:_selected_tool', this.activate_tool, this);
+        var my_viewer = this.viewer;
+        var my_model = this.model;
+        // save the state at every click
+        this.viewer.addEventListener('mousedown',
+            function (e) {
+                var appState = ctools.appState.save([my_viewer]);
+                var appStr = JSON.stringify(appState);
+                console.log('State is:' + appStr);
+                my_model.set('_tool_state_out', appStr);
+                my_model.save_changes();
+            });
     },
     parse_image: function (imageB64Data, width, height, min_val, max_val) {
         var imagePixelData = parsePixelData(imageB64Data);
@@ -174,13 +184,6 @@ var CornerstoneView = widgets.DOMWidgetView.extend({
             }
         }
 
-    },
-    save_cs_state: function () {
-        var appState = ctools.appState.save([this.viewer]);
-        var appStr = JSON.stringify(appState);
-        console.log('State is:' + appStr);
-        this.model.set('_tool_state', appStr);
-        this.model.save_changes();
     },
     update_cs_state: function () {
         var new_state_json = this.model.get('_tool_state');

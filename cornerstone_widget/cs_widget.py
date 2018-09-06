@@ -50,8 +50,8 @@ class CornerstoneWidget(widgets.DOMWidget):
     img_min = tr.Float(0).tag(sync=True)
     img_max = tr.Float(255).tag(sync=True)
     img_scale = tr.Float(1.0).tag(sync=True)
-    _tool_state = tr.Unicode('').tag(sync=True)
-    _tool_state_counter = tr.Int(0).tag(sync=True)
+    _tool_state_in = tr.Unicode('').tag(sync=True)
+    _tool_state_out = tr.Unicode('').tag(sync=True)
     _selected_tool = tr.Unicode('').tag(sync=True)
 
     VALID_TOOLS = ['zoom',
@@ -102,13 +102,14 @@ class CornerstoneWidget(widgets.DOMWidget):
 
     def get_tool_state(self):
         """Get the state of all the tools as a dictionary"""
-        # run the update twice
-        # TODO: this is not updated the first time
-        self._tool_state_counter += 1
-        if len(self._tool_state) > 0:
-            return json.loads(self._tool_state)
+        if len(self._tool_state_out) > 0:
+            return json.loads(self._tool_state_out)
         else:
             return {}
+
+    def set_tool_state(self, state):
+        """A method for feeding data into the widget"""
+        self._tool_state_in = json.dumps(state)
 
 
 class WidgetObject:
