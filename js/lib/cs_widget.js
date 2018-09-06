@@ -88,7 +88,7 @@ var CornerstoneView = widgets.DOMWidgetView.extend({
             slope: (max_val - min_val) / 65535.0,
             intercept: min_val,
             windowCenter: 0.5 * (max_val + min_val),
-            windowWidth: 0.5 * (max_val - min_val),
+            windowWidth: (max_val - min_val),
             getPixelData: getPixelData,
             rows: width,
             columns: height,
