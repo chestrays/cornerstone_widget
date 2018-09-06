@@ -1,7 +1,7 @@
 import numpy as np
-from ipywidgets.embed import embed_snippet
-
+import pytest
 from cornerstone_widget import CornerstoneWidget
+from ipywidgets.embed import embed_snippet
 
 
 def test_ipy():
@@ -14,3 +14,12 @@ def test_ipy():
     widget_html = embed_snippet(c)
     assert 'CornerstoneModel' in widget_html, 'Should contain widget code'
     assert 'cornerstone_widget' in widget_html, 'Should contain widget code'
+
+
+def test_tools():
+    c = CornerstoneWidget()
+    c.select_tool('pan')
+    widget_state = c.get_state()
+    assert widget_state['_selected_tool'] == 'pan', 'Should be empty'
+    with pytest.raises(NotImplementedError):
+        c.select_tool('pane')

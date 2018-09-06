@@ -54,6 +54,16 @@ class CornerstoneWidget(widgets.DOMWidget):
     _tool_state_counter = tr.Int(0).tag(sync=True)
     _selected_tool = tr.Unicode('').tag(sync=True)
 
+    VALID_TOOLS = ['zoom',
+                   'pan',
+                   'freehand',
+                   'bbox',
+                   'probe',
+                   'reset',
+                   'window',
+                   'highlight'
+                   ]
+
     def update_image(self, in_image):
         # type: (CornerstoneWidget, np.ndarray) -> None
         """
@@ -84,6 +94,10 @@ class CornerstoneWidget(widgets.DOMWidget):
         >>> cs.get_state()['_selected_tool']
         'pan'
         """
+        tool_name = tool_name.lower().strip()
+        if tool_name not in self.VALID_TOOLS:
+            raise NotImplementedError('{} tool is not available'.format(
+                tool_name))
         self._selected_tool = tool_name
 
     def get_tool_state(self):

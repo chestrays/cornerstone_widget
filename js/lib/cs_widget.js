@@ -138,7 +138,7 @@ var CornerstoneView = widgets.DOMWidgetView.extend({
     },
     activate_tool: function () {
         var tool_name = this.model.get('_selected_tool');
-        console.log('switching to tool: '+tool_name);
+        console.log('switching to tool: ' + tool_name);
         if (tool_name == 'reset') {
             this._disable_all_tools(this.viewer);
             cs.reset(this.viewer);
@@ -167,6 +167,10 @@ var CornerstoneView = widgets.DOMWidgetView.extend({
             if (tool_name == 'highlight') {
                 ctools.highlight.enable(this.viewer);
                 ctools.highlight.activate(this.viewer, 1);
+            }
+            if (tool_name == 'freehand') {
+                ctools.freehand.enable(this.viewer);
+                ctools.freehand.activate(this.viewer, 1);
             }
         }
 
