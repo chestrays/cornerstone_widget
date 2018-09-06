@@ -3,9 +3,11 @@ var _ = require('lodash');
 var cs = require('cornerstone-core');
 var cm = require('cornerstone-math');
 var ctools = require('cornerstone-tools');
+var hammerjs = require('hammerjs');
 
 ctools.external.cornerstone = cs;
 ctools.external.cornerstoneMath = cm;
+ctools.external.Hammer = hammerjs.Hammer;
 
 // When serialiazing the entire widget state for embedding, only values that
 // differ from the defaults will be specified.
