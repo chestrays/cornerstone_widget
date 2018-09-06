@@ -1,7 +1,8 @@
-import ipywidgets as widgets
-import traitlets as tr
 import base64
+
+import ipywidgets as widgets
 import numpy as np
+import traitlets as tr
 
 
 def encode_numpy_b64(in_img):
@@ -10,10 +11,13 @@ def encode_numpy_b64(in_img):
     Encode numpy arrays as b64 strings
     :param in_img:
     :return:
-    >>> encode_numpy_b64(np.eye(2))
-    'AAAAAAAA8D8AAAAAAAAAAAAAAAAAAAAAAAAAAAAA8D8='
+    >>> encode_numpy_b64(np.eye(2).astype(np.float32))
+    'AQAAAAAAAQA='
+    >>> encode_numpy_b64(np.eye(2).astype(np.uint16))
+    'AQAAAAAAAQA='
     """
-    return base64.b64encode(in_img.tobytes()).decode()
+    u16_img = in_img.astype(np.uint16).tobytes()
+    return base64.b64encode(u16_img).decode()
 
 
 @widgets.register
@@ -43,5 +47,13 @@ class CornerstoneWidget(widgets.DOMWidget):
         (self.img_width, self.img_height) = in_image.shape
         self.img_min = float(in_image.min())
         self.img_max = float(in_image.max())
-        self.img_bytes = encode_numpy_b64(in_image)
+
+        rs_image = (in_image - self.img_min)
+        im_range = self.img_max - self.img_min
+        MIN_RANGE = 1
+        if im_range < MIN_RANGE:
+            self.img_max = self.img_min + MIN_RANGE
+            im_range = MIN_RANGE
+        rs_image *= (2 ** 16 - 1) / im_range
+        self.img_bytes = encode_numpy_b64(rs_image)
         self.img_scale = 1.0

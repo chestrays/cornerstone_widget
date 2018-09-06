@@ -8,7 +8,7 @@ def test_ipy():
     c = CornerstoneWidget()
     c.update_image(np.ones((2, 1)))
     widget_state = c.get_state()
-    assert widget_state['img_bytes'] == 'AAAAAAAA8D8AAAAAAADwPw=='
+    assert widget_state['img_bytes'] == 'AAAAAA=='
     assert widget_state['img_width'] == 2
     assert widget_state['img_height'] == 1
     widget_html = embed_snippet(c)
