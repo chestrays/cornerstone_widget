@@ -1,6 +1,6 @@
 from ._version import version_info, __version__
 
-from .cs_widget import CornerstoneWidget
+from .cs_widget import CornerstoneWidget, CornerstoneToolbarWidget
 
 
 def _jupyter_nbextension_paths():
