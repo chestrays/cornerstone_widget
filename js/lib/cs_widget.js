@@ -152,7 +152,12 @@ var CornerstoneView = widgets.DOMWidgetView.extend({
         if (tool_name == 'reset') {
             this._disable_all_tools(this.viewer);
             cs.reset(this.viewer);
-            ctools.appState.restore({});
+            var toolStateManager = ctools.getElementToolStateManager(this.viewer);
+            // Note that this only works on ImageId-specific tool state managers (for now)
+            toolStateManager.clear(this.viewer);
+            cs.updateImage(this.viewer);
+            this.model.set('_tool_state_in', '');
+            this.model.set('_tool_state_out', '');
             this._setup_tools();
         } else {
             this._disable_all_tools(this.viewer);
@@ -186,7 +191,7 @@ var CornerstoneView = widgets.DOMWidgetView.extend({
 
     },
     update_cs_state: function () {
-        var new_state_json = this.model.get('_tool_state');
+        var new_state_json = this.model.get('_tool_state_in');
         if (new_state_json.length > 1) {
             var appState = JSON.parse(new_state_json);
             console.log('updating state:' + new_state_json + ', ' + new_state_json.length);
