@@ -30,4 +30,4 @@ script:
   - if [ "$TO_TEST" = "CODE" ]; then codecov; fi
   - if [ "$TO_TEST" = "STYLE" ]; then flake8 --ignore E501,F401; fi
   - if [ "$TO_TEST" = "NOTEBOOKS" ]; then source build_tools/travis_notebooks.sh; fi
-  - if [ "$TO_TEST" = "NOTEBOOKS" ]; then source build_tools/travis_browser.sh; fi
+  - if [ "$TO_TEST" = "BROWSER" ]; then source build_tools/travis_browser.sh; fi
