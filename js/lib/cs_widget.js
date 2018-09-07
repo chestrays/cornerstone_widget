@@ -3,6 +3,7 @@ var _ = require('lodash');
 var cs = require('cornerstone-core');
 var cm = require('cornerstone-math');
 var ctools = require('cornerstone-tools');
+var $ = require('jquery');
 
 
 ctools.external.cornerstone = cs;
