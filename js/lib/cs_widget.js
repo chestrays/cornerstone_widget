@@ -25,9 +25,11 @@ var CornerstoneModel = widgets.DOMWidgetModel.extend({
         img_height: 0,
         img_min: 0,
         img_max: 1,
+        img_color: false,
         _selected_tool: '',
         _tool_state_in: '',
         _tool_state_out: ''
+
     })
 });
 
@@ -44,10 +46,16 @@ function str2ab(str) {
     return bufView;
 }
 
-function parsePixelData(base64PixelData, width, height) {
-    var pixelDataAsString = window.atob(base64PixelData);
-    var pixelData = str2ab(pixelDataAsString);
-    return pixelData;
+function str2rgb(str) {
+    var buf = new ArrayBuffer(str.length); // 1 bytes for each char
+    var bufView = new Uint8Array(buf);
+    var index = 0;
+    for (var i = 0, strLen = str.length; i < strLen; i += 2) {
+        var lower = str.charCodeAt(i);
+        bufView[index] = lower;
+        index++;
+    }
+    return bufView;
 }
 
 function disableContextMenu(e) {
@@ -84,32 +92,48 @@ var CornerstoneView = widgets.DOMWidgetView.extend({
                 my_model.save_changes();
             });
     },
-    parse_image: function (imageB64Data, width, height, min_val, max_val) {
-        var imagePixelData = parsePixelData(imageB64Data);
-        console.log('decoding: ' + width + 'x' + height + ' => ' + imagePixelData.length)
+    parse_image: function (imageB64Data, width, height, min_val, max_val, color) {
+        var pixelDataAsString = window.atob(imageB64Data, width, height);
+        if (color) {
+            var pixelData = str2rgb(pixelDataAsString);
+        } else {
+            var pixelData = str2ab(pixelDataAsString);
+        }
+        console.log('decoding: ' + width + 'x' + height + ' => ' + pixelData.length)
 
         function getPixelData() {
-            return imagePixelData;
+            return pixelData;
         }
 
-        return {
+        var maxPixelValue = 65535;
+        var sizeInBytes = height * width * 2;
+        var slope = (max_val - min_val) / 65535.0;
+        var intercept = min_val;
+        if (color) {
+            maxPixelValue = 255;
+            sizeInBytes = height * width * 4;
+            slope = 1;
+            intercept = 0;
+        }
+        var out_arr = {
             imageId: '',
             minPixelValue: 0,
-            maxPixelValue: 65535,
-            slope: (max_val - min_val) / 65535.0,
-            intercept: min_val,
+            maxPixelValue: maxPixelValue,
+            slope: slope,
+            intercept: intercept,
+            getPixelData: getPixelData,
             windowCenter: 0.5 * (max_val + min_val),
             windowWidth: (max_val - min_val),
-            getPixelData: getPixelData,
-            rows: width,
-            columns: height,
+            rows: height,
+            columns: width,
             height: height,
             width: width,
-            color: false,
+            color: color,
             columnPixelSpacing: 1.0,
             rowPixelSpacing: 1.0,
-            sizeInBytes: height * width * 2
+            sizeInBytes: sizeInBytes
         };
+        return out_arr;
     },
     dicom_changed: function () {
         var img_bytes = this.model.get('img_bytes');
@@ -117,7 +141,8 @@ var CornerstoneView = widgets.DOMWidgetView.extend({
         var img_height = this.model.get('img_height');
         var img_min = this.model.get('img_min');
         var img_max = this.model.get('img_max');
-        var out_img = this.parse_image(img_bytes, img_width, img_height, img_min, img_max);
+        var color = this.model.get('img_color')
+        var out_img = this.parse_image(img_bytes, img_width, img_height, img_min, img_max, color);
         cs.enable(this.viewer);
         this.viewport = cs.getDefaultViewportForImage(this.viewer, out_img);
         console.log(out_img);

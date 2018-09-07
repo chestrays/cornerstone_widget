@@ -10,8 +10,8 @@ from IPython.display import display
 MIN_RANGE = 1  # the minimum max-min value (prevent dividing by 0)
 
 
-def encode_numpy_b64(in_img):
-    # type: (np.ndarray) -> str
+def encode_numpy_b64(in_img, rgb=False):
+    # type: (np.ndarray, bool) -> str
     """
     Encode numpy arrays as b64 strings
     :param in_img:
@@ -20,14 +20,29 @@ def encode_numpy_b64(in_img):
     'AQAAAAAAAQA='
     >>> encode_numpy_b64(np.eye(2).astype(np.uint16))
     'AQAAAAAAAQA='
+    >>> encode_numpy_b64(np.zeros((2, 2, 4)), True)
+    'AAAAAAAAAAAAAAAAAAAAAA=='
     """
-    u16_img = in_img.astype(np.uint16).tobytes()
-    return base64.b64encode(u16_img).decode()
+    if rgb:
+        if len(in_img.shape) != 3:
+            raise ValueError('Image is not a color image: {}'.format(
+                in_img.shape))
+        if in_img.shape[2] != 4:
+            raise ValueError('Images must be RGBA images 4 channels')
+
+        img_bytes = in_img.astype(np.uint8).tobytes()
+    else:
+        if len(in_img.shape) != 2:
+            raise ValueError('Short encoding requires 2D grayscale images')
+
+        img_bytes = in_img.astype(np.uint16).tobytes()
+    return base64.b64encode(img_bytes).decode()
 
 
 @widgets.register
 class CornerstoneWidget(widgets.DOMWidget):
-    """A simple cornerstone widget
+    """
+    A widget for viewing 2D images with zoom and windowing support
     >>> cs = CornerstoneWidget()
     >>> cs.update_image(np.eye(3))
     >>> cs.get_state()['img_bytes']
@@ -51,6 +66,7 @@ class CornerstoneWidget(widgets.DOMWidget):
     img_min = tr.Float(0).tag(sync=True)
     img_max = tr.Float(255).tag(sync=True)
     img_scale = tr.Float(1.0).tag(sync=True)
+    img_color = tr.Bool(False).tag(sync=True)
     _tool_state_in = tr.Unicode('').tag(sync=True)
     _tool_state_out = tr.Unicode('').tag(sync=True)
     _selected_tool = tr.Unicode('').tag(sync=True)
@@ -70,18 +86,28 @@ class CornerstoneWidget(widgets.DOMWidget):
         """
         Update the image loaded in the widget
         """
-        (self.img_width, self.img_height) = in_image.shape
-        self.img_min = float(in_image.min())
-        self.img_max = float(in_image.max())
-
-        rs_image = (in_image - self.img_min)
-        im_range = self.img_max - self.img_min
-
-        if im_range < MIN_RANGE:
-            self.img_max = self.img_min + MIN_RANGE
-            im_range = MIN_RANGE
-        rs_image *= (2 ** 16 - 1) / im_range
-        self.img_bytes = encode_numpy_b64(rs_image)
+        self.img_height = in_image.shape[0]
+        self.img_width = in_image.shape[1]
+        if len(in_image.shape) == 2:
+            self.img_min = float(in_image.min())
+            self.img_max = float(in_image.max())
+            self.img_color = False
+            rs_image = (in_image - self.img_min)
+            im_range = self.img_max - self.img_min
+            MIN_RANGE = 1
+            if im_range < MIN_RANGE:
+                self.img_max = self.img_min + MIN_RANGE
+                im_range = MIN_RANGE
+            rs_image *= (2 ** 16 - 1) / im_range
+            self.img_bytes = encode_numpy_b64(rs_image)
+        elif len(in_image.shape) == 3:
+            if in_image.shape[2] != 4:
+                raise NotImplementedError('Images must be RGBA')
+            self.img_color = True
+            self.img_min = 0
+            self.img_max = 255
+            self.img_bytes = encode_numpy_b64(
+                in_image.clip(0, 255).astype(np.uint8), rgb=True)
         self.img_scale = 1.0
 
     def select_tool(self, tool_name):
@@ -131,6 +157,7 @@ class CornerstoneToolbarWidget(WidgetObject):
     """
     A slightly more fancy version of cornerstone with a toolbar
     >>> cs = CornerstoneToolbarWidget()
+    >>> cs.update_image(np.ones((3,2)))
     """
 
     def __init__(self, buttons_per_row=3):
@@ -147,7 +174,7 @@ class CornerstoneToolbarWidget(WidgetObject):
             """we need an extra layer of separation so the callbacks work"""
 
             def _callback(*args, **kwargs):
-                self.set_tool(in_str)
+                self.select_tool(in_str)
 
             return _callback
 
@@ -177,10 +204,10 @@ class CornerstoneToolbarWidget(WidgetObject):
     def update_image(self, in_image):
         self._cur_image_data = in_image
         self.cur_image_view.update_image(self._cur_image_data)
-        self.set_tool('')
-        self.set_tool('reset')
+        self.select_tool('')
+        self.select_tool('reset')
 
-    def set_tool(self, tool_name):
+    def select_tool(self, tool_name):
         """
         Set the tool to use with the widget
         :param tool_name:
