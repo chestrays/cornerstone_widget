@@ -10,8 +10,8 @@ from IPython.display import display
 MIN_RANGE = 1  # the minimum max-min value (prevent dividing by 0)
 
 
-def encode_numpy_b64(in_img):
-    # type: (np.ndarray) -> str
+def encode_numpy_b64(in_img, rgb=False):
+    # type: (np.ndarray, bool) -> str
     """
     Encode numpy arrays as b64 strings
     :param in_img:
@@ -21,8 +21,11 @@ def encode_numpy_b64(in_img):
     >>> encode_numpy_b64(np.eye(2).astype(np.uint16))
     'AQAAAAAAAQA='
     """
-    u16_img = in_img.astype(np.uint16).tobytes()
-    return base64.b64encode(u16_img).decode()
+    if rgb:
+        img_bytes = in_img[:, :].astype(np.uint8).tobytes()
+    else:
+        img_bytes = in_img.astype(np.uint16).tobytes()
+    return base64.b64encode(img_bytes).decode()
 
 
 @widgets.register
