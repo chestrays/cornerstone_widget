@@ -31,3 +31,4 @@ For a development installation (requires npm),
     $ pip install -e .
     $ jupyter nbextension install --py --symlink --sys-prefix cornerstone_widget
     $ jupyter nbextension enable --py --sys-prefix cornerstone_widget
+    $ jupyter labextension install js
