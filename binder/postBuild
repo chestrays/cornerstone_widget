@@ -5,3 +5,5 @@ jupyter nbextension enable --py --sys-prefix cornerstone_widget
 pip install appmode
 jupyter nbextension     enable --py --sys-prefix appmode
 jupyter serverextension enable --py --sys-prefix appmode
+
+npm install -g casperjs
