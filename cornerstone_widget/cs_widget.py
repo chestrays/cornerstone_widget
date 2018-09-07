@@ -102,7 +102,7 @@ class CornerstoneWidget(widgets.DOMWidget):
             self.img_bytes = encode_numpy_b64(rs_image)
         elif len(in_image.shape) == 3:
             if in_image.shape[2] != 4:
-                raise ValueError('Images must be RGBA')
+                raise NotImplementedError('Images must be RGBA')
             self.img_color = True
             self.img_min = 0
             self.img_max = 255
@@ -173,7 +173,7 @@ class CornerstoneToolbarWidget(WidgetObject):
             """we need an extra layer of separation so the callbacks work"""
 
             def _callback(*args, **kwargs):
-                self.set_tool(in_str)
+                self.select_tool(in_str)
 
             return _callback
 
@@ -206,7 +206,7 @@ class CornerstoneToolbarWidget(WidgetObject):
         self.set_tool('')
         self.set_tool('reset')
 
-    def set_tool(self, tool_name):
+    def select_tool(self, tool_name):
         """
         Set the tool to use with the widget
         :param tool_name:
