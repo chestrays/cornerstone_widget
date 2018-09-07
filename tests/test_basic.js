@@ -3,12 +3,7 @@
 // To run:
 // 1) Start a notebook server in an empty directory.
 // 2) casperjs test_basic.js
-
-var casper = require('casper').create({
-    // verbose: true,
-    // logLevel: "debug"
-});
-
+// casper is already defined
 casper.start('http://127.0.0.1:8765',function () {
 });
 
