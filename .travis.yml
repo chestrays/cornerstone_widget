@@ -13,11 +13,14 @@ env:
     - TO_TEST=CODE
     - TO_TEST=NOTEBOOKS
     - TO_TEST=STYLE
+    - TO_TEST=BROWSER
 
 install:
   - pip install -e .
   - pip install pytest-cov codecov mypy flake8 nose
   - if [ "$TO_TEST" = "NOTEBOOKS" ]; then pip install notebook nbconvert; fi
+  - if [ "$TO_TEST" = "BROWSER" ]; then pip install notebook; fi
+  - if [ "$TO_TEST" = "BROWSER" ]; then npm install -g casperjs; fi
 
 script:
   - if [ "$TO_TEST" = "CODE" ]; then mypy -p cornerstone_widget --ignore-missing-imports; fi
@@ -25,3 +28,4 @@ script:
   - if [ "$TO_TEST" = "CODE" ]; then codecov; fi
   - if [ "$TO_TEST" = "STYLE" ]; then flake8 --ignore E501,F401; fi
   - if [ "$TO_TEST" = "NOTEBOOKS" ]; then source build_tools/travis_notebooks.sh; fi
+  - if [ "$TO_TEST" = "NOTEBOOKS" ]; then source build_tools/travis_browser.sh; fi
