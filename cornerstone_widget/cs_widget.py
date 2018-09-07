@@ -157,6 +157,7 @@ class CornerstoneToolbarWidget(WidgetObject):
     """
     A slightly more fancy version of cornerstone with a toolbar
     >>> cs = CornerstoneToolbarWidget()
+    >>> cs.update_image(np.ones((3,2)))
     """
 
     def __init__(self, buttons_per_row=3):
@@ -203,8 +204,8 @@ class CornerstoneToolbarWidget(WidgetObject):
     def update_image(self, in_image):
         self._cur_image_data = in_image
         self.cur_image_view.update_image(self._cur_image_data)
-        self.set_tool('')
-        self.set_tool('reset')
+        self.select_tool('')
+        self.select_tool('reset')
 
     def select_tool(self, tool_name):
         """
