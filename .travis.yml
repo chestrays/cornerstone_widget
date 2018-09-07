@@ -21,6 +21,8 @@ install:
   - if [ "$TO_TEST" = "NOTEBOOKS" ]; then pip install notebook nbconvert; fi
   - if [ "$TO_TEST" = "BROWSER" ]; then pip install notebook; fi
   - if [ "$TO_TEST" = "BROWSER" ]; then npm install -g casperjs; fi
+  - if [ "$TO_TEST" = "BROWSER" ]; then wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2; fi
+  - if [ "$TO_TEST" = "BROWSER" ]; then tar xvjf phantomjs-2.1.1-linux-x86_64.tar.bz2; fi
 
 script:
   - if [ "$TO_TEST" = "CODE" ]; then mypy -p cornerstone_widget --ignore-missing-imports; fi
