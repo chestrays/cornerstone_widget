@@ -3,10 +3,16 @@ cornerstone_widget  [![Build Status](https://travis-ci.org/chestrays/cornerstone
 
 A Jupyter Widget for the Cornerstone Medical Image Viewing Library
 
+![Preview](preview.gif)
+
+Overview
+----
+The widget lets you easily look at medical and similar images in the browser using the [CornerstoneJS](https://www.cornerstonejs.org/) library. The library offers lots of fancy functionality like zoom, windowing, panning, regions of interest, painting, polygons and beyond. Currently only a few of these features are implemented but feel free to make pull-requests or issues with suggestions
+
 Notebooks
 ----
 
-The notebooks directory contains demo and tutorial
+The notebooks directory contains demo and tutorial, you can use mybinder to get a quick feeling for what works well.
 - https://mybinder.org/v2/gh/chestrays/cornerstone_widget/master?urlpath=apps%2Fnotebooks%2Fdemo.ipynb
 
 Installation
@@ -14,7 +20,7 @@ Installation
 
 To install use pip:
 
-    $ pip install cornerstone_widget
+    $ pip install git+https://github.com/chestrays/cornerstone_widget
     $ jupyter nbextension enable --py --sys-prefix cornerstone_widget
 
 
