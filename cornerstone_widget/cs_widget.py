@@ -1,4 +1,3 @@
-import base64
 import json
 from typing import Dict
 
@@ -7,36 +6,9 @@ import numpy as np
 import traitlets as tr
 from IPython.display import display
 
+from .utils import encode_numpy_b64
+
 MIN_RANGE = 1  # the minimum max-min value (prevent dividing by 0)
-
-
-def encode_numpy_b64(in_img, rgb=False):
-    # type: (np.ndarray, bool) -> str
-    """
-    Encode numpy arrays as b64 strings
-    :param in_img:
-    :return:
-    >>> encode_numpy_b64(np.eye(2).astype(np.float32))
-    'AQAAAAAAAQA='
-    >>> encode_numpy_b64(np.eye(2).astype(np.uint16))
-    'AQAAAAAAAQA='
-    >>> encode_numpy_b64(np.zeros((2, 2, 4)), True)
-    'AAAAAAAAAAAAAAAAAAAAAA=='
-    """
-    if rgb:
-        if len(in_img.shape) != 3:
-            raise ValueError('Image is not a color image: {}'.format(
-                in_img.shape))
-        if in_img.shape[2] != 4:
-            raise ValueError('Images must be RGBA images 4 channels')
-
-        img_bytes = in_img.astype(np.uint8).tobytes()
-    else:
-        if len(in_img.shape) != 2:
-            raise ValueError('Short encoding requires 2D grayscale images')
-
-        img_bytes = in_img.astype(np.uint16).tobytes()
-    return base64.b64encode(img_bytes).decode()
 
 
 @widgets.register

@@ -3,7 +3,7 @@ import os
 
 import numpy as np
 
-from cornerstone_widget.cs_widget import encode_numpy_b64
+from cornerstone_widget.utils import encode_numpy_b64
 
 
 def test_encoding():
