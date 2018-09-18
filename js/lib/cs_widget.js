@@ -82,8 +82,8 @@ var CornerstoneView = widgets.DOMWidgetView.extend({
         this.model.on('change:_selected_tool', this.activate_tool, this);
         var my_viewer = this.viewer;
         var my_model = this.model;
-        // save the state at every click
-        this.viewer.addEventListener('mousedown',
+        // save the cornerstone state on mouseup to catch both clicks and drags
+        this.viewer.addEventListener('mouseup',
             function (e) {
                 var appState = ctools.appState.save([my_viewer]);
                 var appStr = JSON.stringify(appState);
@@ -137,6 +137,7 @@ var CornerstoneView = widgets.DOMWidgetView.extend({
     },
     dicom_changed: function () {
         var img_bytes = this.model.get('img_bytes');
+        console.log('image bytes', img_bytes)
         var img_width = this.model.get('img_width');
         var img_height = this.model.get('img_height');
         var img_min = this.model.get('img_min');
