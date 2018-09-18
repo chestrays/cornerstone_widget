@@ -9,3 +9,7 @@ jupyter labextension install js
 pip install appmode
 jupyter nbextension     enable --py --sys-prefix appmode
 jupyter serverextension enable --py --sys-prefix appmode
+
+npm install casperjs
+wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
+tar xvjf phantomjs-2.1.1-linux-x86_64.tar.bz2
