@@ -165,8 +165,20 @@ class CornerstoneToolbarWidget(WidgetObject):
 
         self._empty_data = np.zeros((3, 3))
         self._cur_image_data = np.ones((1, 1))
-        refresh_but = widgets.Button(description="", icon="undo")
-        refresh_but.on_click(lambda *args, **kwargs: self._refresh_image())
+        refresh_but = widgets.Button(description="Start",
+                                     icon="play",
+                                     button_style="success"
+                                     )
+        def _first_click(button):
+            button.description = ""
+            button.icon = "refresh"
+            button.button_style = ""
+            self._refresh_image()
+            button._click_handlers.callbacks.pop()
+            button.on_click(
+                lambda b: self._refresh_image()
+            )
+        refresh_but.on_click(_first_click)
 
         self._toolbar = [refresh_but]
 
