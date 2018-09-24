@@ -172,6 +172,7 @@ class CornerstoneToolbarWidget(WidgetObject):
         # We use the refresh button as a "start" button to
         # show the first image and then replace the on_click
         # handler after the first click
+
         def _first_click(button):
             button.description = ""
             button.icon = "refresh"
