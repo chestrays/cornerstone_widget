@@ -19,9 +19,14 @@ env:
     - TO_TEST=CODE
     - TO_TEST=NOTEBOOKS
     - TO_TEST=STYLE
+    - TO_TEST=BROWSER
 
-before_install: source build_tools/before_install.sh
+before_install: 
+  - if [ "$TO_TEST" = "BROWSER" ]; then source build_tools/before_install.sh; fi
+  
 install:
+  - if [ "$TO_TEST" = "BROWSER" ]; then conda env update -n robot --file ${TRAVIS_BUILD_DIR}/build_tools/robot_tests.yml; fi
+  - if [ "$TO_TEST" = "BROWSER" ]; then source activate robot; fi
   - pip install -e .
   - pip install pytest-cov codecov mypy flake8 nose
   - if [ "$TO_TEST" = "NOTEBOOKS" ]; then pip install notebook nbconvert; fi
