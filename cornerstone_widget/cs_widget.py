@@ -128,6 +128,9 @@ class WidgetObject:
 class CornerstoneToolbarWidget(WidgetObject):
     """
     A slightly more fancy version of cornerstone with a toolbar
+    :param buttons_per_row: number of columns before making a new row
+    :param tools: list of names of tools (from TOOLS dict)
+    :param show_reset: show the reset button
     >>> cs = CornerstoneToolbarWidget()
     >>> cs.update_image(np.ones((3,2)))
     """
@@ -139,8 +142,11 @@ class CornerstoneToolbarWidget(WidgetObject):
              'bbox': dict(icon='edit', description='Bounding Box')
              }
 
-    def __init__(self, buttons_per_row=3,
-                 tools=['pan', 'window', 'zoom', 'probe']):
+    def __init__(self,
+                 buttons_per_row=3,
+                 tools=['pan', 'window', 'zoom', 'probe'],
+                 show_reset=True
+                 ):
         self.cur_image_view = CornerstoneWidget()
 
         self._empty_data = np.zeros((3, 3))
@@ -149,19 +155,28 @@ class CornerstoneToolbarWidget(WidgetObject):
                                      icon="play",
                                      button_style="success"
                                      )
+
         # We use the refresh button as a "start" button to
         # show the first image and then replace the on_click
         # handler after the first click
 
         def _first_click(button):
-            button.description = "Reset"
-            button.icon = "refresh"
-            button.button_style = ""
-            self._refresh_image()
+            # type: (widgets.Button) -> None
+            button.disabled = True
+
             button._click_handlers.callbacks.pop()
-            button.on_click(
-                lambda b: self._refresh_image()
-            )
+            self._refresh_image()
+            if show_reset:
+                button.description = "Reset"
+                button.icon = "refresh"
+                button.button_style = ""
+                button.on_click(
+                    lambda b: self._refresh_image()
+                )
+                button.disabled = False
+            else:
+                button.close()
+
         refresh_but.on_click(_first_click)
 
         self._toolbar = [refresh_but]
@@ -169,12 +184,18 @@ class CornerstoneToolbarWidget(WidgetObject):
         def _button_switch_callback(in_str):
             """we need an extra layer of separation so the callbacks work"""
 
-            def _callback(*args, **kwargs):
+            def _callback(button):
+                # type: (widgets.Button) -> None
                 self.select_tool(in_str)
 
             return _callback
 
-        for name in tools:
+        for raw_name in tools:
+            name = raw_name.lower().strip()
+            if name not in self.TOOLS:
+                raise NotImplementedError(
+                    'Tool {-} is not supported, supported tools are {1}'.format(
+                        name, list(self.TOOLS.keys())))
             c_but = widgets.Button(tooltip=name, **self.TOOLS[name])
             c_but.on_click(_button_switch_callback(name))
             self._toolbar += [c_but]
