@@ -20,7 +20,7 @@ env:
     - TO_TEST=NOTEBOOKS
     - TO_TEST=STYLE
 
-before_install: ./build_tools/before_install.sh
+before_install: source build_tools/before_install.sh
 install:
   - pip install -e .
   - pip install pytest-cov codecov mypy flake8 nose
