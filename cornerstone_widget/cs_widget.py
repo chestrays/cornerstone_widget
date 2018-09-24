@@ -175,6 +175,7 @@ class CornerstoneToolbarWidget(WidgetObject):
                 )
                 button.disabled = False
             else:
+                # TODO: is this a good way to delete a button?
                 button.close()
 
         refresh_but.on_click(_first_click)
@@ -194,7 +195,7 @@ class CornerstoneToolbarWidget(WidgetObject):
             name = raw_name.lower().strip()
             if name not in self.TOOLS:
                 raise NotImplementedError(
-                    'Tool {-} is not supported, supported tools are {1}'.format(
+                    'Tool {0} is not supported, supported tools are {1}'.format(
                         name, list(self.TOOLS.keys())))
             c_but = widgets.Button(tooltip=name, **self.TOOLS[name])
             c_but.on_click(_button_switch_callback(name))
