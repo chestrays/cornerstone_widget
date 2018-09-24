@@ -1,0 +1,15 @@
+# taken from https://github.com/deathbeds/jyve/blob/9b25c2844a8cb1132e2c631b1e8b08cf76f44e5b/environment.yml
+name: robot-tests
+
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - geckodriver
+  - nodejs >=8.9.3,<9
+  - python-chromedriver-binary
+  - robotframework-lint
+  - robotframework-seleniumlibrary
+  - selenium =3.8.0
+  - wget
