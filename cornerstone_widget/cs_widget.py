@@ -131,8 +131,16 @@ class CornerstoneToolbarWidget(WidgetObject):
     >>> cs = CornerstoneToolbarWidget()
     >>> cs.update_image(np.ones((3,2)))
     """
+    # a dictionary of tool name to toolbar button properties
+    TOOLS = {'pan': dict(icon='arrows', description='Pan'),
+             'window': dict(icon='adjust', description='Window'),
+             'zoom': dict(icon='search-plus', description='Zoom'),
+             'probe': dict(icon='info-circle', description='Probe'),
+             'bbox': dict(icon='edit', description='Bounding Box')
+             }
 
-    def __init__(self, buttons_per_row=3):
+    def __init__(self, buttons_per_row=3,
+                 tools=['pan', 'window', 'zoom', 'probe']):
         self.cur_image_view = CornerstoneWidget()
 
         self._empty_data = np.zeros((3, 3))
@@ -146,7 +154,7 @@ class CornerstoneToolbarWidget(WidgetObject):
         # handler after the first click
 
         def _first_click(button):
-            button.description = ""
+            button.description = "Reset"
             button.icon = "refresh"
             button.button_style = ""
             self._refresh_image()
@@ -166,13 +174,9 @@ class CornerstoneToolbarWidget(WidgetObject):
 
             return _callback
 
-        for c_icon, c_tool in [('arrows', 'pan'),
-                               ('adjust', 'window'),
-                               ('search-plus', 'zoom'),
-                               ('info-circle', 'probe'),
-                               ('edit', 'bbox')]:
-            c_but = widgets.Button(description="", icon=c_icon, tooltip=c_tool)
-            c_but.on_click(_button_switch_callback(c_tool))
+        for name in tools:
+            c_but = widgets.Button(tooltip=name, **self.TOOLS[name])
+            c_but.on_click(_button_switch_callback(name))
             self._toolbar += [c_but]
 
         c_toolbar = []
