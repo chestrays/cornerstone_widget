@@ -1,6 +1,25 @@
 import base64
+from typing import Callable
 
+import ipywidgets as ipw
 import numpy as np
+
+
+def button_debounce(callback):
+    # type: (Callable[[ipw.Button], None]) -> Callable[[ipw.Button], None]
+    """
+    disable a button until the callback completes
+    :param callback:
+    :return:
+    """
+
+    def _db_callback(button):
+        # type: (ipw.Button) -> None
+        button.disabled = True
+        callback(button)
+        button.disabled = False
+
+    return _db_callback
 
 
 def encode_numpy_b64(in_img, rgb=False):

@@ -1,12 +1,12 @@
 import json
-from typing import Dict
+from typing import Dict, Optional, List
 
 import ipywidgets as widgets
 import numpy as np
 import traitlets as tr
 from IPython.display import display
 
-from .utils import encode_numpy_b64
+from .utils import encode_numpy_b64, button_debounce
 
 MIN_RANGE = 1  # the minimum max-min value (prevent dividing by 0)
 
@@ -144,11 +144,14 @@ class CornerstoneToolbarWidget(WidgetObject):
 
     def __init__(self,
                  buttons_per_row=3,
-                 tools=['pan', 'window', 'zoom', 'probe'],
-                 show_reset=True
+                 tools=None,  # type: Optional[List[str]]
                  ):
+        # type: (...) -> None
         self.cur_image_view = CornerstoneWidget()
-
+        if tools is None:
+            tools = ['reset', 'pan', 'window', 'zoom', 'probe']
+        tools = [raw_name.lower().strip() for raw_name in tools]
+        show_reset = 'reset' in tools
         self._empty_data = np.zeros((3, 3))
         self._cur_image_data = np.ones((1, 1))
         refresh_but = widgets.Button(description="Start",
@@ -159,10 +162,9 @@ class CornerstoneToolbarWidget(WidgetObject):
         # We use the refresh button as a "start" button to
         # show the first image and then replace the on_click
         # handler after the first click
-
+        @button_debounce
         def _first_click(button):
             # type: (widgets.Button) -> None
-            button.disabled = True
 
             button._click_handlers.callbacks.pop()
             self._refresh_image()
@@ -173,14 +175,15 @@ class CornerstoneToolbarWidget(WidgetObject):
                 button.on_click(
                     lambda b: self._refresh_image()
                 )
-                button.disabled = False
             else:
-                # TODO: is this a good way to delete a button?
+                # this deletes the button
                 button.close()
 
         refresh_but.on_click(_first_click)
 
-        self._toolbar = [refresh_but]
+        self._toolbar = []  # type: List[widgets.Widget]
+        if not show_reset:
+            self._toolbar += [refresh_but]
 
         def _button_switch_callback(in_str):
             """we need an extra layer of separation so the callbacks work"""
@@ -191,18 +194,20 @@ class CornerstoneToolbarWidget(WidgetObject):
 
             return _callback
 
-        for raw_name in tools:
-            name = raw_name.lower().strip()
-            if name not in self.TOOLS:
-                raise NotImplementedError(
-                    'Tool {0} is not supported, supported tools are {1}'.format(
-                        name, list(self.TOOLS.keys())))
-            c_but = widgets.Button(tooltip=name, **self.TOOLS[name])
-            c_but.on_click(_button_switch_callback(name))
-            self._toolbar += [c_but]
+        for name in tools:
+            if name == 'reset':
+                self._toolbar = [refresh_but]
+            else:
+                if name not in self.TOOLS:
+                    raise NotImplementedError(
+                        'Tool {0} is not supported, supported tools are {1}'.format(
+                            name, list(self.TOOLS.keys())))
+                c_but = widgets.Button(tooltip=name, **self.TOOLS[name])
+                c_but.on_click(_button_switch_callback(name))
+                self._toolbar += [c_but]
 
-        c_toolbar = []
-        c_row = []
+        c_toolbar = []  # type: List[widgets.Widget]
+        c_row = []  # type: List[widgets.Widget]
         for i, c_but in enumerate(self._toolbar, 1):
             c_row += [c_but]
             if (i % buttons_per_row) == 0:
