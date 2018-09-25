@@ -1,12 +1,12 @@
 import json
-from typing import Dict
+from typing import Dict, Optional, List
 
 import ipywidgets as widgets
 import numpy as np
 import traitlets as tr
 from IPython.display import display
 
-from .utils import encode_numpy_b64
+from .utils import encode_numpy_b64, button_debounce
 
 MIN_RANGE = 1  # the minimum max-min value (prevent dividing by 0)
 
@@ -127,7 +127,9 @@ class WidgetObject:
 
 class CornerstoneToolbarWidget(WidgetObject):
     """
-    A slightly more fancy version of cornerstone with a toolbar
+    Fancier version of cornerstone with a toolbar
+    :param buttons_per_row: number of columns before making a new row
+    :param tools: list of names of tools (from TOOLS dict)
     >>> cs = CornerstoneToolbarWidget()
     >>> cs.update_image(np.ones((3,2)))
     """
@@ -139,48 +141,72 @@ class CornerstoneToolbarWidget(WidgetObject):
              'bbox': dict(icon='edit', description='Bounding Box')
              }
 
-    def __init__(self, buttons_per_row=3,
-                 tools=['pan', 'window', 'zoom', 'probe']):
+    def __init__(self,
+                 buttons_per_row=3,
+                 tools=None,  # type: Optional[List[str]]
+                 ):
+        # type: (...) -> None
         self.cur_image_view = CornerstoneWidget()
-
+        if tools is None:
+            tools = ['reset', 'pan', 'window', 'zoom', 'probe']
+        tools = [raw_name.lower().strip() for raw_name in tools]
+        show_reset = 'reset' in tools
         self._empty_data = np.zeros((3, 3))
         self._cur_image_data = np.ones((1, 1))
         refresh_but = widgets.Button(description="Start",
                                      icon="play",
                                      button_style="success"
                                      )
+
         # We use the refresh button as a "start" button to
         # show the first image and then replace the on_click
         # handler after the first click
-
+        @button_debounce()
         def _first_click(button):
-            button.description = "Reset"
-            button.icon = "refresh"
-            button.button_style = ""
-            self._refresh_image()
+            # type: (widgets.Button) -> None
+
             button._click_handlers.callbacks.pop()
-            button.on_click(
-                lambda b: self._refresh_image()
-            )
+            self._refresh_image()
+            if show_reset:
+                button.description = "Reset"
+                button.icon = "refresh"
+                button.button_style = ""
+                button.on_click(
+                    lambda b: self._refresh_image()
+                )
+            else:
+                # this deletes the button
+                button.close()
+
         refresh_but.on_click(_first_click)
 
-        self._toolbar = [refresh_but]
+        self._toolbar = []  # type: List[widgets.Widget]
+        if not show_reset:
+            self._toolbar += [refresh_but]
 
         def _button_switch_callback(in_str):
             """we need an extra layer of separation so the callbacks work"""
 
-            def _callback(*args, **kwargs):
+            def _callback(button):
+                # type: (widgets.Button) -> None
                 self.select_tool(in_str)
 
             return _callback
 
         for name in tools:
-            c_but = widgets.Button(tooltip=name, **self.TOOLS[name])
-            c_but.on_click(_button_switch_callback(name))
-            self._toolbar += [c_but]
+            if name == 'reset':
+                self._toolbar = [refresh_but]
+            else:
+                if name not in self.TOOLS:
+                    raise NotImplementedError(
+                        'Tool {0} is not supported, supported tools are {1}'.format(
+                            name, list(self.TOOLS.keys())))
+                c_but = widgets.Button(tooltip=name, **self.TOOLS[name])
+                c_but.on_click(_button_switch_callback(name))
+                self._toolbar += [c_but]
 
-        c_toolbar = []
-        c_row = []
+        c_toolbar = []  # type: List[widgets.Widget]
+        c_row = []  # type: List[widgets.Widget]
         for i, c_but in enumerate(self._toolbar, 1):
             c_row += [c_but]
             if (i % buttons_per_row) == 0:

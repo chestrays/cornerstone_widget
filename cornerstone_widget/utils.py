@@ -1,6 +1,41 @@
 import base64
+from functools import wraps
+from typing import Callable
 
+import ipywidgets as ipw
 import numpy as np
+
+
+def button_debounce(enable_if_failed=False):
+    # type: (...) -> Callable[[Callable[[ipw.Button], None]], Callable[[ipw.Button], None]]
+    """
+    disable a button until the callback completes
+    :param enable_if_failed: enable the button if the callback fails
+    :return:
+    """
+
+    def decorator(callback):
+        # type: (Callable[[ipw.Button], None]) -> Callable[[ipw.Button], None]
+        """
+        :param callback:
+        :return:
+        """
+
+        @wraps(callback)
+        def wrapped_callback(button):
+            # type: (ipw.Button) -> None
+            button.disabled = True
+            try:
+                callback(button)
+            except Exception as e:
+                if enable_if_failed:
+                    button.disabled = False
+                raise Exception from e
+            button.disabled = False
+
+        return wrapped_callback
+
+    return decorator
 
 
 def encode_numpy_b64(in_img, rgb=False):
@@ -90,3 +125,14 @@ def get_bbox_handles(in_view_dict):
     return [{x_var: [x.get(key, {}).get(x_var) for key in ['start', 'end']] for
              x_var in ['x', 'y']}
             for x in bbox_handles]
+
+
+def _virtual_click_button(btn):
+    # type: (ipw.Button) -> None
+    """
+    A standardized function for clicking buttons programatically
+    :param btn:
+    :return:
+    """
+    for c_callback in btn._click_handlers.callbacks:
+        c_callback(btn)

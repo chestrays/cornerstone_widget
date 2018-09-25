@@ -1,8 +1,11 @@
 import numpy as np
 import pytest
+from ipywidgets.embed import embed_snippet
+
+
 from cornerstone_widget import CornerstoneWidget, CornerstoneToolbarWidget
 from cornerstone_widget.cs_widget import encode_numpy_b64
-from ipywidgets.embed import embed_snippet
+from cornerstone_widget.utils import _virtual_click_button
 
 
 def test_encoding():
@@ -57,3 +60,18 @@ def test_toolbar_tool():
         c.select_tool('pane')
     with pytest.raises(NotImplementedError):
         c.update_image(np.zeros((3, 3, 3)))
+
+
+def test_notoolbar():
+    c = CornerstoneToolbarWidget(tools=[])
+    assert len(c._toolbar) == 1
+    start_but = c._toolbar[0]
+    assert start_but.comm is not None, 'Should have something here'
+    # click button
+    _virtual_click_button(start_but)
+    assert start_but.comm is None, 'Should be a dead button'
+
+
+def test_invalid_toolbar():
+    with pytest.raises(NotImplementedError):
+        CornerstoneToolbarWidget(tools=['Magic_Lasso'])
