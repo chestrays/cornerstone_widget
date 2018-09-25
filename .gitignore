@@ -1,0 +1,7 @@
+cornerstone_widget.egg-info/
+cornerstone_widget/__pycache__/
+cornerstone_widget/static/
+js/dist/
+js/node_modules/
+js/package-lock.json
+notebooks/.ipynb_checkpoints/
