@@ -61,7 +61,7 @@ def test_toolbar_tool():
 
 
 def test_notoolbar():
-    c = CornerstoneToolbarWidget(tools=[], show_reset=False)
+    c = CornerstoneToolbarWidget(tools=[])
     assert len(c._toolbar) == 1
     start_but = c._toolbar[0]
     assert start_but.comm is not None, 'Should have something here'
