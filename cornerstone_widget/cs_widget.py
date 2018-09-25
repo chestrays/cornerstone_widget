@@ -127,10 +127,9 @@ class WidgetObject:
 
 class CornerstoneToolbarWidget(WidgetObject):
     """
-    A slightly more fancy version of cornerstone with a toolbar
+    Fancier version of cornerstone with a toolbar
     :param buttons_per_row: number of columns before making a new row
     :param tools: list of names of tools (from TOOLS dict)
-    :param show_reset: show the reset button
     >>> cs = CornerstoneToolbarWidget()
     >>> cs.update_image(np.ones((3,2)))
     """
@@ -162,7 +161,7 @@ class CornerstoneToolbarWidget(WidgetObject):
         # We use the refresh button as a "start" button to
         # show the first image and then replace the on_click
         # handler after the first click
-        @button_debounce
+        @button_debounce()
         def _first_click(button):
             # type: (widgets.Button) -> None
 
