@@ -7,9 +7,10 @@ from distutils import log
 from subprocess import check_call
 
 from setuptools import setup, find_packages, Command
-from setuptools.command.build_py import build_py
 from setuptools.command.egg_info import egg_info
-from setuptools.command.sdist import sdist
+
+import versioneer
+
 
 here = os.path.dirname(os.path.abspath(__file__))
 node_root = os.path.join(here, 'js')
@@ -130,13 +131,14 @@ class NPM(Command):
         update_package_data(self.distribution)
 
 
-version_ns = {}
-with open(os.path.join(here, 'cornerstone_widget', '_version.py')) as f:
-    exec(f.read(), {}, version_ns)
+version_commands = versioneer.get_cmdclass()
+build_py = version_commands['build_py']
+sdist = version_commands['sdist']
+
 
 setup_args = {
     'name': 'cornerstone_widget',
-    'version': version_ns['__version__'],
+    'version': versioneer.get_version(),
     'description': 'A Jupyter Widget for the Cornerstone Medical Image Viewing Library',
     'long_description': LONG_DESCRIPTION,
     'include_package_data': True,
@@ -159,6 +161,7 @@ setup_args = {
         'egg_info': js_prerelease(egg_info),
         'sdist': js_prerelease(sdist, strict=True),
         'jsdeps': NPM,
+        'version': version_commands['version'],
     },
 
     'author': 'Kevin Mader',
