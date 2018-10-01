@@ -1,2 +1,4 @@
 recursive-include cornerstone_widget/static *.*
 include cornerstone_widget.json
+include versioneer.py
+include cornerstone_widget/_version.py
