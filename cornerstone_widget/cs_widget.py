@@ -6,7 +6,7 @@ import numpy as np
 import traitlets as tr
 from IPython.display import display
 
-from .utils import encode_numpy_b64, button_debounce
+from .utils import encode_numpy_b64, button_debounce, get_bbox_handles
 
 MIN_RANGE = 1  # the minimum max-min value (prevent dividing by 0)
 
@@ -110,6 +110,17 @@ class CornerstoneWidget(widgets.DOMWidget):
     def set_tool_state(self, state):
         """A method for feeding data into the widget"""
         self._tool_state_in = json.dumps(state)
+
+    def get_bbox(self):
+        # type: () -> List[Dict[str, List[float]]]
+        """
+        Get all bounding boxes for the widget
+        :return:
+        >>> cs = CornerstoneWidget()
+        >>> cs.get_bbox()
+        []
+        """
+        return get_bbox_handles(self.get_tool_state())
 
 
 class WidgetObject:
