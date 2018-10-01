@@ -224,6 +224,7 @@ var CornerstoneView = widgets.DOMWidgetView.extend({
             console.log('updating state:' + new_state_json + ', ' + new_state_json.length);
             ctools.appState.restore(appState);
         }
+        this.model.set('_tool_state_out', new_state_json);
     },
     zoom_changed: function () {
         this.viewport.scale = this.model.get('img_scale');

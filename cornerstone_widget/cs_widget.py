@@ -6,7 +6,8 @@ import numpy as np
 import traitlets as tr
 from IPython.display import display
 
-from .utils import encode_numpy_b64, button_debounce, get_bbox_handles
+from .utils import encode_numpy_b64, button_debounce, get_bbox_handles, \
+    inject_dict
 
 MIN_RANGE = 1  # the minimum max-min value (prevent dividing by 0)
 
@@ -108,8 +109,10 @@ class CornerstoneWidget(widgets.DOMWidget):
             return {}
 
     def set_tool_state(self, state):
+        # type: (Dict) -> None
         """A method for feeding data into the widget"""
         self._tool_state_in = json.dumps(state)
+        self._tool_state_out = json.dumps(state)
 
     def get_bbox(self):
         # type: () -> List[Dict[str, List[float]]]
@@ -121,6 +124,37 @@ class CornerstoneWidget(widgets.DOMWidget):
         []
         """
         return get_bbox_handles(self.get_tool_state())
+
+    def add_bbox(self,
+                 bbox  # type: Dict[str, List[float]]
+                 ):
+        # type: (...) -> Dict
+        """
+        Add a bounding box to the current display
+        :param bbox: bounding box (same format as get_bbox
+        :return:
+        >>> cs = CornerstoneWidget()
+        >>> out_state = cs.add_bbox({'x': [0, 5], 'y': [6, 10]})
+        >>> cs.get_bbox()
+        [{'x': [0, 5], 'y': [6, 10]}]
+        """
+        if len(bbox.get('x', [])) != 2:
+            raise ValueError('Invalid x for bounding box: {}'.format(bbox))
+        if len(bbox.get('y', [])) != 2:
+            raise ValueError('Invalid y for bounding box: {}'.format(bbox))
+
+        n_bbox = [{'handles': {'start': {'x': min(bbox['x']),
+                                         'y': min(bbox['y'])},
+                               'end': {'x': max(bbox['x']),
+                                       'y': max(bbox['y'])}}}]
+        old_state = self.get_tool_state()
+        new_state = inject_dict(old_state, ['imageIdToolState',
+                                            '',
+                                            'rectangleRoi',
+                                            'data'],
+                                n_bbox)
+        self.set_tool_state(new_state)
+        return new_state
 
 
 class WidgetObject:
@@ -192,6 +226,7 @@ class CornerstoneToolbarWidget(WidgetObject):
         refresh_but.on_click(_first_click)
 
         self._toolbar = []  # type: List[widgets.Widget]
+
         if not show_reset:
             self._toolbar += [refresh_but]
 
@@ -206,7 +241,7 @@ class CornerstoneToolbarWidget(WidgetObject):
 
         for name in tools:
             if name == 'reset':
-                self._toolbar = [refresh_but]
+                self._toolbar += [refresh_but]
             else:
                 if name not in self.TOOLS:
                     raise NotImplementedError(
