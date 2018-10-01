@@ -25,3 +25,13 @@ script:
   - if [ "$TO_TEST" = "CODE" ]; then codecov; fi
   - if [ "$TO_TEST" = "STYLE" ]; then flake8 --ignore E501,F401; fi
   - if [ "$TO_TEST" = "NOTEBOOKS" ]; then source build_tools/travis_notebooks.sh; fi
+
+deploy:
+  provider: pypi
+  user: "cornerstonewidget"
+  distributions: sdist bdist_wheel
+  on:
+    tags: true
+    repo: chestrays/cornerstone_widget
+  password:
+    secure: "x/O5OSg2rVZ1zO/zZ99Fxpi/po3Gz/Df4u9NIzvXigftXoYQM2y/CMURV12OPogMsW+nAAcE7LJaiduHJjYtHmxZe7j+Macz76DU15hG5xHA/lVs9hDby1DsOXsl0ihAN9GCANzwArylS5ZYMmuHDNs0OYB839LEGHa4rHRKFknb4IySWCrXLel9k1MgypycNnxg2j8RjjKOBO93KA0K3yrjqUKvw/10U8k1/Xqx4qG8CUkL/XBFdHe2VgIxPp1Shdv0rg/Ao77GoPvwhQs91W1i0TvXjFre1F3cIGaR+P/b0w3U/JCET4v+ZtQnCLivJYePCnttEqRHPJv+Yj68gXOKwqRfbjqccQ6Et2k+E8F/sNqqKO7Ya4yqtyaOikgRlvq3gvq/GvNv/qGBNFI4vMv2m+IKoWsIRytnkR066n7nk7JZcrGpMeAF6UrDc0lDzQzZ1VryYh9gRFu9dIOT0eRzCbZZ62N4wGk7yZht1ihf0YODJPKJzWmfKN3z+8aWTG9Yo90FvMvrIwvgQanT7XajQUMwF+rDbHOputEnftv73cALEUhP4ACYXHqUx4vrS1t7Hw74E75p6V6jfsfF0avhSxvKOjI7SM2cMilNyY1lKXHPK0EXiiXFo29h2Fc5TEw406A/iv9mqH0/PMq8vjPztlGZtmKaX+NjnVmE6S0="
