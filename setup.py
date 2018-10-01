@@ -7,9 +7,7 @@ from distutils import log
 from subprocess import check_call
 
 from setuptools import setup, find_packages, Command
-from setuptools.command.build_py import build_py
 from setuptools.command.egg_info import egg_info
-from setuptools.command.sdist import sdist
 
 import versioneer
 
