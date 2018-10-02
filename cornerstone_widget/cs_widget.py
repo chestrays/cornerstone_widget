@@ -142,11 +142,28 @@ class CornerstoneWidget(widgets.DOMWidget):
             raise ValueError('Invalid x for bounding box: {}'.format(bbox))
         if len(bbox.get('y', [])) != 2:
             raise ValueError('Invalid y for bounding box: {}'.format(bbox))
+        # standard fields in a rectRoi Object (if created in cs
+        # visible -> True
+        # active -> False
+        # invalidated -> False
+        # handles ->
+        #   {'start': {'x': , 'y': , 'highlight': True, 'active': False}
+        #   {'end': {'x': , 'y': , 'highlight': True, 'active': False}
+        #   'textBox': {'active': False, 'hasMoved': False,
+        #       'movesIndependently': False, 'drawnIndependently': True,
+        #       'allowedOutsideImage': True, 'hasBoundingBox': True, 'x':, 'y':,
+        #       'boundingBox': {'width': , 'height': , 'left': , 'top'}}
 
-        n_bbox = [{'handles': {'start': {'x': min(bbox['x']),
-                                         'y': min(bbox['y'])},
-                               'end': {'x': max(bbox['x']),
-                                       'y': max(bbox['y'])}}}]
+        # the elements used here are by trial and error as the minimum set
+        # for javascript not to complain
+        n_bbox = [{
+            'visible': True,
+            'handles': {'start': {'x': min(bbox['x']),
+                                  'y': min(bbox['y'])},
+                        'end': {'x': max(bbox['x']),
+                                'y': max(bbox['y'])}},
+            'textBox': {'hasMoved': False}
+        }]
         old_state = self.get_tool_state()
         new_state = inject_dict(old_state, ['imageIdToolState',
                                             '',
