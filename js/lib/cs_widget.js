@@ -82,15 +82,17 @@ var CornerstoneView = widgets.DOMWidgetView.extend({
         this.model.on('change:_selected_tool', this.activate_tool, this);
         var my_viewer = this.viewer;
         var my_model = this.model;
+        var state_save_callback = function (e) {
+            var appState = ctools.appState.save([my_viewer]);
+            var appStr = JSON.stringify(appState);
+            console.log('State is:' + appStr);
+            my_model.set('_tool_state_out', appStr);
+            my_model.save_changes();
+        };
         // save the cornerstone state on mouseup to catch both clicks and drags
-        this.viewer.addEventListener('mouseup',
-            function (e) {
-                var appState = ctools.appState.save([my_viewer]);
-                var appStr = JSON.stringify(appState);
-                console.log('State is:' + appStr);
-                my_model.set('_tool_state_out', appStr);
-                my_model.save_changes();
-            });
+        this.viewer.addEventListener('mouseup', state_save_callback);
+        // save the state now
+        state_save_callback(0);
     },
     parse_image: function (imageB64Data, width, height, min_val, max_val, color) {
         var pixelDataAsString = window.atob(imageB64Data, width, height);
@@ -224,6 +226,7 @@ var CornerstoneView = widgets.DOMWidgetView.extend({
             console.log('updating state:' + new_state_json + ', ' + new_state_json.length);
             ctools.appState.restore(appState);
         }
+        this.model.set('_tool_state_out', new_state_json);
     },
     zoom_changed: function () {
         this.viewport.scale = this.model.get('img_scale');

@@ -1,6 +1,6 @@
 import base64
 from functools import wraps
-from typing import Callable
+from typing import Callable, Any, Dict, List
 
 import ipywidgets as ipw
 import numpy as np
@@ -102,7 +102,38 @@ def get_nested(a_dict, *args, default_value=None):
     return value
 
 
+def inject_dict(in_dict,  # type: Dict[Any, Any]
+                key_list,  # type: List[Any]
+                value  # type: List[Any]
+                ):
+    # type: (...) -> Dict[Any, Any]
+    """
+    Add elements to an existing dictionary, useful for updating the
+    state of the cornerstone widget without changing anything else
+    :param in_dict:
+    :param key_list:
+    :param value:
+    :return:
+    >>> inject_dict({}, ['a', 'b'], [1, 2])
+    {'a': {'b': [1, 2]}}
+    >>> inject_dict({'a': {'b': [1, 2], 'c': 'hey'}}, ['a', 'b'], [3, 4])
+    {'a': {'b': [1, 2, 3, 4], 'c': 'hey'}}
+    """
+    new_dict = in_dict.copy()
+    # apparently python works with pointers
+    n_pointer = new_dict
+    for c_key in key_list[:-1]:
+        if c_key not in n_pointer:
+            n_pointer[c_key] = {}
+        n_pointer = n_pointer[c_key]
+    cur_val = get_nested(in_dict, *key_list, default_value=[])
+    cur_val += value
+    n_pointer[key_list[-1]] = cur_val
+    return new_dict
+
+
 def get_bbox_handles(in_view_dict):
+    # type: (Dict[str, Any]) -> List[Dict[str, List[float]]]
     """
     the bounding box info is buried in a lot of dictionaries
     :param in_view_dict: a dictionary with the list inside of it

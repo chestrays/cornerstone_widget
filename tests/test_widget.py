@@ -2,7 +2,6 @@ import numpy as np
 import pytest
 from ipywidgets.embed import embed_snippet
 
-
 from cornerstone_widget import CornerstoneWidget, CornerstoneToolbarWidget
 from cornerstone_widget.cs_widget import encode_numpy_b64
 from cornerstone_widget.utils import _virtual_click_button
@@ -70,6 +69,12 @@ def test_notoolbar():
     # click button
     _virtual_click_button(start_but)
     assert start_but.comm is None, 'Should be a dead button'
+
+
+def test_toolbar_w_reset():
+    cs_view = CornerstoneToolbarWidget(tools=['zoom',
+                                              'probe', 'bbox', 'reset'])
+    assert len(cs_view._toolbar) == 4
 
 
 def test_invalid_toolbar():
