@@ -164,7 +164,7 @@ setup_args = {
         'version': version_commands['version'],
     },
 
-    'author': 'Kevin Mader',
+    'author': 'Cornerstone widget contributors',
     'author_email': 'kevinmader@gmail.com',
     'url': 'https://github.com/chestrays/cornerstone_widget',
     'keywords': [
